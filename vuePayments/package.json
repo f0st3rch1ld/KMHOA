@@ -1,0 +1,23 @@
+{
+  "name": "vuepayments",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build_dev": "vite build --watch --mode development",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@formkit/vue": "^1.6.9",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "sass": "^1.84.0",
+    "sass-loader": "^16.0.4",
+    "vite": "^6.0.11",
+    "vite-plugin-vue-devtools": "^7.7.0"
+  }
+}
