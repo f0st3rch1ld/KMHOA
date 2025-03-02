@@ -10,7 +10,11 @@
         />
       </transition>
       <transition>
-        <Paypal v-if="activeStep === 2" :formInputs="formInputs" />
+        <Paypal
+          v-if="activeStep === 2"
+          :formInputs="formInputs"
+          @switchStep="switchStep"
+        />
       </transition>
     </div>
   </div>

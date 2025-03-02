@@ -1,34 +1,85 @@
 <template>
   <section>
     <div class="columns">
-      <div class="column is-half" id="paypal-payment-container">
-        <button>Pay With PayPal</button>
-      </div>
-      <div class="column is-half">
+      <div class="column is-half" id="payee-details">
         <ul>
-          <li><strong>First Name: </strong>{{ formInputs.firstName }}</li>
-          <li><strong>Last Name: </strong>{{ formInputs.lastName }}</li>
-          <li><strong>Email: </strong>{{ formInputs.email }}</li>
-          <li><strong>Street Address: </strong>{{ formInputs.street }}</li>
-          <li><strong>City: </strong>{{ formInputs.city }}</li>
-          <li><strong>State: </strong>{{ formInputs.state }}</li>
-          <li><strong>Zip: </strong>{{ formInputs.zip }}</li>
+          <li><h3>Your Information</h3></li>
+          <li>
+            Please Review your information here before continuing to paypal.
+          </li>
+          <li><hr /></li>
+          <li>
+            First Name: <strong>{{ formInputs.firstName }}</strong>
+          </li>
+          <li>
+            Last Name: <strong>{{ formInputs.lastName }}</strong>
+          </li>
+          <li>
+            Email: <strong>{{ formInputs.email }}</strong>
+          </li>
+          <li>
+            Street Address: <strong>{{ formInputs.street }}</strong>
+          </li>
+          <li>
+            City: <strong>{{ formInputs.city }}</strong>
+          </li>
+          <li>
+            State: <strong>{{ formInputs.state }}</strong>
+          </li>
+          <li>
+            Zip: <strong>{{ formInputs.zip }}</strong>
+          </li>
+          <li><hr /></li>
+          <li><button @click="navigateToStep(1)">Make Changes</button></li>
         </ul>
+      </div>
+      <div class="column is-half" id="paypal-payment-container">
+        <div id="paypal-payment-portal"></div>
       </div>
     </div>
   </section>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted } from "vue";
+import { loadScript } from "@paypal/paypal-js";
 
-const ppClientId = ref('AdFGtAaiTTKkBNdywYhVqmqNpBeBMOmeCnMSTIvXcasWeru4RlaZtgTsauXkQArRWy_fw1RxuT2puT_S')
+let paypal;
 
 const props = defineProps({
   formInputs: {
     type: Object,
     required: true,
   },
+});
+
+const emit = defineEmits(["switchStep"]);
+
+const navigateToStep = (step) => {
+  emit("switchStep", step);
+};
+
+const initializePaypal = async () => {
+  try {
+    paypal = await loadScript({
+      clientId:
+        "AdFGtAaiTTKkBNdywYhVqmqNpBeBMOmeCnMSTIvXcasWeru4RlaZtgTsauXkQArRWy_fw1RxuT2puT_S",
+    });
+  } catch (error) {
+    console.error("failed to load the PayPal JS SDK script", error);
+  }
+
+  if (paypal) {
+    try {
+      await paypal.Buttons().render("#paypal-payment-portal");
+    } catch (error) {
+      console.error("failed to render the PayPal Buttons", error);
+    }
+  }
+};
+
+onMounted(() => {
+  initializePaypal();
 });
 </script>
 
@@ -39,7 +90,8 @@ section {
   width: 100%;
 
   .columns {
-    height: 250px;
+    height: auto;
+    min-height: 250px;
 
     ul {
       list-style-type: none;
@@ -50,9 +102,50 @@ section {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100%;
+      height: auto;
     }
   }
+}
+
+#payee-details {
+  ul {
+    background-color: #325ce8;
+    color: #fff;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.2);
+
+    li {
+      h3 {
+        margin: 0;
+      }
+
+      button {
+        padding: 0.75rem 1.25rem;
+        color: #fff;
+        border-style: solid;
+        border-color: #fff;
+        border-width: 1px;
+        border-radius: 7px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        background-color: transparent;
+        cursor: pointer;
+        transition-timing-function: ease-in-out;
+        transition-duration: 0.2s;
+
+        &:hover {
+          background-color: #fff;
+          color: #325ce8;
+        }
+      }
+    }
+  }
+}
+
+#buttons-container,
+#paypal-payment-portal {
+  width: 100%;
 }
 
 @media screen and (max-width: 768px) {

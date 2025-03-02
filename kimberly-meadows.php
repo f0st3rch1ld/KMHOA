@@ -24,8 +24,6 @@ function enqueueVuePaymentScripts() {
   );
 
   if (is_page($enqueueOnPages)) {
-    wp_enqueue_script('paypal', 'https://sandbox.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID', array(), null);
-
     $jsFiles = glob('wp-content/plugins/Kimberly-Meadows-HOA/vuePayments/dist/assets/*.js');
     foreach ($jsFiles as $file) {
       $fileName = basename($file);
