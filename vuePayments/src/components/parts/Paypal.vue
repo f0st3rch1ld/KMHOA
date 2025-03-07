@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section v-if="!duesPaid">
     <div class="columns">
       <div class="column is-half" id="payee-details">
         <ul>
@@ -41,10 +41,13 @@
 </template>
 
 <script setup>
+import { ref } from "vue";
 import { onMounted } from "vue";
 import { loadScript } from "@paypal/paypal-js";
 
 let paypal;
+
+let duesPaid = ref(false);
 
 const props = defineProps({
   formInputs: {
@@ -71,7 +74,31 @@ const initializePaypal = async () => {
 
   if (paypal) {
     try {
-      await paypal.Buttons().render("#paypal-payment-portal");
+      await paypal
+        .Buttons({
+          createOrder: (data, actions) => {
+            return actions.order.create({
+              purchase_units: [
+                {
+                  description: "Kimberly Meadows Yearly HOA Dues",
+                  amount: {
+                    currency_code: "USD",
+                    value: "77.00",
+                  },
+                },
+              ],
+            });
+          },
+          onApprove: async (data, actions) => {
+            const order = await actions.order.capture();
+            duesPaid.value = true;
+            navigateToStep(3);
+          },
+          onError: (err) => {
+            console.log(err);
+          },
+        })
+        .render("#paypal-payment-portal");
     } catch (error) {
       console.error("failed to render the PayPal Buttons", error);
     }

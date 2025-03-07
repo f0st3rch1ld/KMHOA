@@ -35,7 +35,7 @@ const stepClasses = (step) => {
   };
 };
 const navigateToStep = (step) => {
-  if (step <= props.activeStep) {
+  if (step <= props.activeStep && props.activeStep !== 3) {
     emit("switchStep", step);
   }
 };

@@ -16,6 +16,9 @@
           @switchStep="switchStep"
         />
       </transition>
+      <transition>
+        <Summary v-if="activeStep === 3" />
+      </transition>
     </div>
   </div>
 </template>
@@ -25,6 +28,7 @@ import { ref } from "vue";
 import Steps from "./parts/Steps.vue";
 import Form from "./parts/Form.vue";
 import Paypal from "./parts/Paypal.vue";
+import Summary from "./parts/Summary.vue";
 
 const activeStep = ref(1);
 const formInputs = ref();
@@ -81,6 +85,9 @@ const switchStep = (step) => {
     width: 100%;
     padding: 7px;
 
+    &.is-full {
+      width: 100%;
+    }
     &.is-half {
       width: 50%;
     }
